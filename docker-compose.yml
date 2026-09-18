@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: job_agent_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: job_agent_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama_local
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+
+  agent:
+    build: .
+    container_name: job_agent_core
+    depends_on:
+      - db
+      - ollama
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    ports:
+      - "2024:2024"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/job_agent_db
+      - PYTHONPATH=/app
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - OLLAMA_MODEL=llama3.2
+    command: ./start.sh
+    restart: unless-stopped
+
+  dashboard:
+    build: .
+    container_name: job_agent_dashboard
+    depends_on:
+      - db
+      - ollama
+    env_file:
+      - .env
+    ports:
+      - "8501:8501"
+    volumes:
+      - .:/app
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/job_agent_db
+      - PYTHONPATH=/app
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - OLLAMA_MODEL=llama3.2
+    command: streamlit run src/dashboard/app.py --server.address=0.0.0.0 --server.port=8501
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  ollama_data:

@@ -1,0 +1,42 @@
+# Environnements virtuels
+venv/
+env/
+.env
+
+# Configuration et secrets
+config.yaml
+config.yml
+token.json
+credentials.json
+worker.py
+init_project.py
+.playwright-mcp/
+
+# Base de données
+*.db
+*.sqlite
+*.sqlite3
+
+# Fichiers de CV personnels ou générés
+assets/master_cv.docx
+outputs/
+*.docx
+*.pdf
+
+# Cache Python et Docker
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.docker/
+.langgraph_api/
+.langgraph_api/
+checkpoints/
+
+
+# Checkpointers SQLite
+checkpoints.db
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3

@@ -1,0 +1,8 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "job_agent": "src/agent/graph.py:graph",
+    "ChatRouter": "src/agent/Chat_Router/chat_router_graph.py:chat_router_app"
+  },
+  "env": ".env"
+}
